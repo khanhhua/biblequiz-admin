@@ -16,6 +16,9 @@ router.get('/api/questions/:id', apiQuestion.get);
 router.post('/api/questions', apiQuestion.post);
 router.post('/api/questions/:id', apiQuestion.update);
 
+var apiAuth = require('./api.auth');
+router.post('/api/authenticate', apiAuth.authenticate);
+
 app.use(router.routes());
 
 app.use(function *(){
