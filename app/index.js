@@ -3,15 +3,18 @@
 var koa = require('koa');
 var logger = require('koa-logger');
 var router = require('koa-router')();
+var bodyParser = require('koa-bodyparser');
 var app = koa();
 
 //logger
 app.use(logger());
+app.use(bodyParser());
 
 var apiQuestion = require('./api.question');
 router.get('/api/questions', apiQuestion.query);
 router.get('/api/questions/:id', apiQuestion.get);
 router.post('/api/questions', apiQuestion.post);
+router.post('/api/questions/:id', apiQuestion.update);
 
 app.use(router.routes());
 

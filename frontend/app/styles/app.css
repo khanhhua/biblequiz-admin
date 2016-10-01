@@ -1,0 +1,17 @@
+.navbar-fixed-top + .container {
+  margin-top: 80px;
+}
+
+
+.list-group.questions-list {
+
+}
+
+.list-group.questions-list .inline-toolbar {
+  margin-top: 15px;
+}
+
+
+.list-group-item .row .btn.btn-xs {
+  margin-top: 5px;
+}

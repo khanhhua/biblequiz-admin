@@ -15,7 +15,9 @@ exports.get = function *() {
   const id = this.params.id;
 
   const data = yield thunkify(db.find)({selector: {doctype:'question', _id: id}});
-  this.body = data[0].docs[0];
+  this.body = {
+    question: data[0].docs[0]
+  };
 };
 
 exports.query = function *() {
@@ -23,8 +25,12 @@ exports.query = function *() {
   const skip = this.query.skip || 0;
 
   const query = this.query.q || null;
+  const questions = yield exec;
 
-  this.body = yield exec;
+  this.body = {
+    questions: questions
+  };
+  return;
 
   function exec (done) {
     db.view('question', 'question-admin', {descending:true,limit:limit,skip:skip}, function (err, result) {
@@ -34,13 +40,87 @@ exports.query = function *() {
 
       done(null, result.rows.map(item => item.value));
     });
-  };
+  }
 };
 
 exports.post = function *() {
-  const data = this.body;
+  const data = this.request.body;
+  const question = data.question;
+  if (!question) {
+    this.status = 400;
+    this.body = 'Invalid request';
 
-  return thunkify(db.insert)(data);
+    return;
+  }
+
+  question.doctype = 'question';
+  question['@version'] = '1.0.0';
+  question.author = 'sysadmin';
+  question.createdAt = new Date().toISOString();
+  question.updatedAt = new Date().toISOString();
+
+  console.log('Question: %j', question);
+
+  var result = yield thunkify(db.insert)(data.question);
+  if (result.length !== 2) {
+    this.status = 500;
+    this.body = {
+      ok: false,
+      error: 'Invalid Request'
+    };
+
+    return;
+  }
+
+  if (result[0].ok === true) {
+    this.status = result[1].statusCode;
+    this.body = result[0];
+  }
+  else {
+    this.status = 400;
+    this.body = {
+      ok: false,
+      error: 'Invalid Request'
+    };
+  }
+};
+
+exports.update = function *() {
+  const data = this.request.body;
+  const question = data.question;
+  if (!question) {
+    this.status = 400;
+    this.body = 'Invalid request';
+
+    return;
+  }
+
+  question.updatedAt = new Date().toISOString();
+
+  console.log('Question: %j', question);
+
+  var result = yield thunkify(db.insert)(data.question);
+  if (result.length !== 2) {
+    this.status = 500;
+    this.body = {
+      ok: false,
+      error: 'Invalid Request'
+    };
+
+    return;
+  }
+
+  if (result[0].ok === true) {
+    this.status = result[1].statusCode;
+    this.body = result[0];
+  }
+  else {
+    this.status = 400;
+    this.body = {
+      ok: false,
+      error: 'Invalid Request'
+    };
+  }
 };
 
 exports.del = function *() {

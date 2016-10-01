@@ -1,0 +1,35 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <div class="navbar-brand">
+                Bible Quiz Admin
+            </div>
+        </div>
+        <ul class="nav navbar-nav">
+            <li>
+              {{#link-to 'dashboard'}}Dashboard{{/link-to}}
+            </li>
+            <li>
+              {{#link-to 'questions'}}Questions{{/link-to}}
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="#">Log out</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <div class="row">
+        <div class={{if showingMenu 'hidden-xs col-sm-4' 'hidden'}}>
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation">{{#link-to 'questions.new'}}New{{/link-to}}</li>
+                <li role="presentation">{{#link-to 'questions'}}Browse{{/link-to}}</li>
+            </ul>
+        </div>
+        <div class={{if showingMenu 'col-xs-12 col-sm-8' 'col-xs-12 col-sm-12'}}>
+        {{outlet}}
+        </div>
+    </div>
+</div>

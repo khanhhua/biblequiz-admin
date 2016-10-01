@@ -1,0 +1,24 @@
+<nav class="navbar">
+    <ul class="nav nav-pills navbar-right">
+        <li>
+          {{#link-to 'questions.new' class="btn btn-primary"}}Add{{/link-to}}
+        </li>
+    </ul>
+    <div class="navbar-header">
+        <h1>Questions</h1>
+    </div>
+</nav>
+
+<div class="col-xs-12 col-sm-12">
+  <ul class="list-group questions-list">
+    {{#each model as |question|}}
+    <li class="list-group-item">
+      {{question.content}}
+      <span class="label label-default">{{question.category}}</span>
+      <ul class="list-inline inline-toolbar">
+        <li>{{#link-to 'questions.edit' question._id}}edit{{/link-to}}</li>
+      </ul>
+    </li>
+    {{/each}}
+  </ul>
+</div>
