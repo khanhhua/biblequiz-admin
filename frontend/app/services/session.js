@@ -44,9 +44,9 @@ export default Ember.Service.extend({
     storage.removeItem('session.accessToken');
 
     this.setProperties({
-      username: null,
-      roles: null,
-      accessToken: null
+      username: undefined,
+      roles: [],
+      accessToken: undefined
     });
 
     return Ember.RSVP.Promise.resolve();
