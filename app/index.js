@@ -1,6 +1,6 @@
 var koa = require('koa');
 var logger = require('koa-logger');
-var router = require('koa-router')();
+var router = require('koa-router');
 var bodyParser = require('koa-bodyparser');
 var app = koa();
 
@@ -11,14 +11,18 @@ app.use(bodyParser());
 var apiAuth = require('./api.auth');
 var apiQuestion = require('./api.question');
 
-router.get('/api/questions', apiAuth.middlewares.deserializer, apiQuestion.query);
-router.get('/api/questions/:id', apiQuestion.get);
-router.post('/api/questions', apiQuestion.post);
-router.post('/api/questions/:id', apiQuestion.update);
+var rootRoute = router();
+var protectedRoute = router();
 
-router.post('/api/authenticate', apiAuth.authenticate);
+protectedRoute.get('/questions', apiQuestion.query);
+protectedRoute.get('/questions/:id', apiQuestion.get);
+protectedRoute.post('/questions', apiQuestion.post);
+protectedRoute.post('/questions/:id', apiQuestion.update);
 
-app.use(router.routes());
+protectedRoute.post('/authenticate', apiAuth.authenticate);
+
+rootRoute.use('/api', apiAuth.middlewares.deserializer, protectedRoute.routes());
+app.use(rootRoute.routes());
 
 app.use(function *(){
   this.set('Content-Type', 'text/html');

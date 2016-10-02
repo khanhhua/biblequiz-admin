@@ -12,12 +12,25 @@
 <div class="col-xs-12 col-sm-12">
   <ul class="list-group questions-list">
     {{#each model as |question|}}
-    <li class="list-group-item">
-      {{question.content}}
-      <span class="label label-default">{{question.category}}</span>
-      <ul class="list-inline inline-toolbar">
-        <li>{{#link-to 'questions.edit' question._id}}edit{{/link-to}}</li>
-      </ul>
+    <li class="list-group-item row">
+      <div class="col-sm-8">
+        <p>{{question.content}}</p>
+        <span class="label label-default">{{question.category}}</span>
+        <span class="label label-default">{{question.contentType}}</span>
+      </div>
+      <div class="col-sm-4">
+        <dl class="dl-horizontal question-meta">
+          <dt class="">Submitted by:</dt><dd>{{question.author}}</dd>
+          <dt class="">Status:</dt><dd>
+            <span class={{if (eq question.status 'public') 'label label-success' 'label label-default'}}>
+              {{question.status}}
+            </span>
+          </dd>
+        </dl>
+        <ul class="list-inline inline-toolbar">
+          <li>{{#link-to 'questions.edit' question._id class="btn btn-xs btn-primary"}}edit{{/link-to}}</li>
+        </ul>
+      </div>
     </li>
     {{/each}}
   </ul>

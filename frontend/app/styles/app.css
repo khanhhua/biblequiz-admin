@@ -45,6 +45,19 @@
   margin-top: 15px;
 }
 
+.dl-horizontal.question-meta > dt {
+  width: 110px;
+}
+
+.dl-horizontal.question-meta > dd {
+  margin-left: 120px;
+}
+
+
+.list-group-item.row {
+  padding-left: 0;
+  padding-right: 0;
+}
 
 .list-group-item .row .btn.btn-xs {
   margin-top: 5px;
