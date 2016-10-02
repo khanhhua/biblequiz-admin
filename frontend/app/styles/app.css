@@ -3,6 +3,40 @@
 }
 
 
+.container-fluid.login {
+  position: relative;
+
+  padding-top: 50px;
+}
+
+.container-fluid.login:before {
+  content: "";
+  display: block;
+  position: fixed;
+  z-index: -1;
+
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+
+  background-color: whitesmoke;
+}
+
+.login h1 {
+  color: #ddd;
+}
+
+.panel.panel-login {
+  margin-top: 20px;
+  border-width: 0;
+
+  -webkit-box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+
 .list-group.questions-list {
 
 }
