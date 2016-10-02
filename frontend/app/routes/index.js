@@ -2,6 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
   ajax: Ember.inject.service(),
+  session: Ember.inject.service(),
   actions: {
     login (username, password) {
       console.log(`[login] Logging in ${username}:${password}`);
@@ -13,11 +14,9 @@ export default Ember.Route.extend({
           password
         })
       }).then(data => {
-        const {jwt} = data;
-        const ajax = this.get('ajax');
-        ajax.headers['Authentication'] = `jwt ${jwt}`;
+        const {username, roles, jwt} = data;
 
-        sessionStorage.setItem('jwt', jwt);
+        this.get('session').authorize({username, roles}, jwt);
 
         this.transitionTo('questions');
       });

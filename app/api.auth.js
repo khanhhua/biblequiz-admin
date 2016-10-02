@@ -43,10 +43,45 @@ exports.authenticate = function *() {
     return;
   }
 
-  const token = jsonwebtoken.sign({sub:user.username,exp:new Date().getTime() + 3600000}, SECRET);
+  const token = jsonwebtoken.sign(
+    {
+      sub: user.username,
+      exp: new Date().getTime() + 3600000
+    }, SECRET);
 
   this.status = 200;
   this.body = {
-    jwt: token
+    jwt: token,
+    username: user.username,
+    roles: user.roles
   };
+};
+
+exports.middlewares = {
+  deserializer: function *(next) {
+    const authentication = this.headers['authentication'];
+    if (!authentication) {
+      return yield next;
+    }
+
+    if (!authentication.startsWith('jwt ')) {
+      return yield next;
+    }
+
+    const jwt = authentication.substring(4);
+    try {
+      const payload = jsonwebtoken.verify(jwt, SECRET);
+
+      this.request.currentUser = {
+        id: payload.sub,
+        roles: payload.roles
+      };
+
+      console.info(`[deserializer] Current user: %j`, this.request.currentUser);
+      return yield next;
+    }
+    catch (e) {
+      return yield next;
+    }
+  }
 };

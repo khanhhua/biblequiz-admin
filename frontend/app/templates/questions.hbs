@@ -13,11 +13,16 @@
               {{#link-to 'questions'}}Questions{{/link-to}}
             </li>
         </ul>
+        {{#if session.username}}
         <ul class="nav navbar-nav navbar-right">
+            <li class="navbar-text">
+                {{session.username}}
+            </li>
             <li>
-                <a href="#">Log out</a>
+                <a href="#" {{action 'logout'}}>Log out</a>
             </li>
         </ul>
+        {{/if}}
     </div>
 </nav>
 <div class="container">
