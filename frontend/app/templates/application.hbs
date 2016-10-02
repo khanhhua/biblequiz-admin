@@ -1,0 +1,29 @@
+{{#if session.username}}
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <div class="navbar-brand">
+                Bible Quiz Admin
+            </div>
+        </div>
+        <ul class="nav navbar-nav">
+            <li>
+              {{#link-to 'dashboard'}}Dashboard{{/link-to}}
+            </li>
+            <li>
+              {{#link-to 'questions'}}Questions{{/link-to}}
+            </li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+            <li class="navbar-text">
+              {{session.username}}
+            </li>
+            <li>
+                <a href="#" {{action 'logout'}}>Log out</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+{{/if}}
+{{outlet}}

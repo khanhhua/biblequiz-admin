@@ -32,7 +32,7 @@ export default Ember.Route.extend({
         }
       ).then((data) => {
         const {id} = data;
-        this.transitionTo('questions.edit', {id});
+        this.transitionTo('questions.edit', id);
       });
     }
   },

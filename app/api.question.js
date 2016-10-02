@@ -55,7 +55,8 @@ exports.post = function *() {
 
   question.doctype = 'question';
   question['@version'] = '1.0.0';
-  question.author = 'sysadmin';
+  question.author = this.request.currentUser.id;
+  question.status = 'draft';
   question.createdAt = new Date().toISOString();
   question.updatedAt = new Date().toISOString();
 
