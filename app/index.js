@@ -10,6 +10,7 @@ app.use(bodyParser());
 
 var apiAuth = require('./api.auth');
 var apiQuestion = require('./api.question');
+var apiUser = require('./api.user');
 
 var rootRoute = router();
 var protectedRoute = router();
@@ -18,6 +19,12 @@ protectedRoute.get('/questions', apiQuestion.query);
 protectedRoute.get('/questions/:id', apiQuestion.get);
 protectedRoute.post('/questions', apiQuestion.post);
 protectedRoute.post('/questions/:id', apiQuestion.update);
+
+protectedRoute.get('/users', apiUser.query);
+protectedRoute.get('/users/me', apiUser.profile);
+protectedRoute.get('/users/:id', apiUser.get);
+protectedRoute.post('/users', apiUser.post);
+protectedRoute.post('/users/:id', apiUser.update);
 
 protectedRoute.post('/authenticate', apiAuth.authenticate);
 

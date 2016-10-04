@@ -1,0 +1,35 @@
+<nav class="navbar">
+    <ul class="nav nav-pills navbar-right">
+        <li>
+          {{#link-to 'users.new' class="btn btn-primary"}}Add{{/link-to}}
+        </li>
+    </ul>
+    <div class="navbar-header">
+        <h1>Users</h1>
+    </div>
+</nav>
+
+<table class="table table-responsive">
+    <thead>
+    <tr>
+        <th style="width: 30%">User</th>
+        <th style="width: 70%">Roles</th>
+        <th width="50">Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each model as |user|}}
+    <tr>
+        <td>
+          {{#link-to 'users.edit' user._id}}
+            {{user.username}}
+          {{/link-to}}
+        </td>
+        <td>{{user.roles}}</td>
+        <td>
+          <span class="label label-info">{{user.status}}</span>
+        </td>
+    </tr>
+    {{/each}}
+    </tbody>
+</table>
