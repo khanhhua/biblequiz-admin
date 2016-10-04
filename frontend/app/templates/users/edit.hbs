@@ -1,0 +1,50 @@
+<h2>
+    {{model.username}}
+</h2>
+<hr>
+{{#bs-form}}
+<div class="form-group">
+    <p class="text-right text-muted">Last updated at {{model.updatedAt}}</p>
+</div>
+<div class={{if errors.username "form-group has-error" "form-group"}}>
+    <label for="username" class="control-label">Username</label>
+    {{input value=model.username class="form-control"}}
+    {{#if errors.username}}
+        <small class="help-block">{{errors.username}}</small>
+    {{/if}}
+</div>
+<div class={{if errors.email "form-group has-error" "form-group"}}>
+    <label for="username" class="control-label">Email</label>
+    {{input value=model.email type="email" class="form-control"}}
+    {{#if errors.email}}
+        <small class="help-block">{{errors.email}}</small>
+    {{/if}}
+</div>
+<div class={{if errors.roles "form-group has-error" "form-group"}}>
+    <label for="username" class="control-label">Roles</label>
+    {{#each roles as |role|}}
+        <div class="checkbox">
+            <label>
+              {{input type="checkbox" checked=role.checked}}
+              {{role.label}}
+            </label>
+        </div>
+    {{/each}}
+    {{#if errors.roles}}
+        <small class="help-block">{{errors.roles}}</small>
+    {{/if}}
+</div>
+<div class="form-group">
+    <label for="username" class="control-label">Status</label>
+    <div class="checkbox">
+        <label>
+          {{input type="checkbox" checked=model.active}}
+            Active
+        </label>
+    </div>
+</div>
+<div class="form-group text-center">
+    <button class="btn btn-primary" {{action 'save' model}}>Save</button>
+    <button class="btn btn-default" {{action 'cancel'}}>Cancel</button>
+</div>
+{{/bs-form}}
