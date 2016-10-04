@@ -26,34 +26,34 @@ exports.authenticate = function *() {
     return;
   }
 
-  const data = yield thunkify(db.find)({selector: {doctype:'user', _id: credential.username}});
+  const sha1 = crypto.createHash('sha1');
+  const hashedPass = sha1.update(credential.password).digest('hex');
+
+  const data = yield thunkify(db.view)('user', 'user-credential', {key: [credential.username, hashedPass]});
   if (data.length !== 2) {
     this.status = 403;
     this.status = 'Invalid username or password';
     return;
   }
 
-  const sha1 = crypto.createHash('sha1');
-  const hashedPass = sha1.update(credential.password).digest('hex');
-
-  const user = data[0].docs[0];
-  if (user.password !== hashedPass) {
+  if (data[0].rows.length !== 1) {
     this.status = 403;
     this.body = 'Invalid username or password';
     return;
   }
 
+  const roles = data[0].rows[0].value;
   const token = jsonwebtoken.sign(
     {
-      sub: user.username,
+      sub: credential.username,
       exp: new Date().getTime() + 3600000
     }, SECRET);
 
   this.status = 200;
   this.body = {
     jwt: token,
-    username: user.username,
-    roles: user.roles
+    username: credential.username,
+    roles: roles
   };
 };
 
