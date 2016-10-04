@@ -23,7 +23,8 @@ export default Ember.Route.extend({
           data: JSON.stringify({ user: model })
         })
         .then(data => {
-          const {id} = data;
+          const {id, meta} = data;
+          console.debug('Password: %s', meta.password);
           this.transitionTo('users.edit', id);
         });
     },

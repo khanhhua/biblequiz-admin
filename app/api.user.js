@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const thunkify = require('thunkify');
 
 const Cloudant = require('cloudant');
@@ -15,8 +16,11 @@ exports.get = function *() {
   const id = this.params.id;
 
   const data = yield thunkify(db.find)({selector: {doctype:'user', _id: id}});
+  const user = data[0].docs[0];
+  delete user.password;
+
   this.body = {
-    user: data[0].docs[0]
+    user: user
   };
 };
 
@@ -57,6 +61,11 @@ exports.post = function *() {
   user.doctype = 'user';
   user['@version'] = '1.0.0';
 
+  const random = yield thunkify(crypto.randomBytes)(8);
+  const password = random.toString('hex');
+  const sha1 = crypto.createHash('sha1');
+  user.password = sha1.update(password).digest('hex');
+
   user.status = 'active';
   user.createdAt = new Date().toISOString();
   user.updatedAt = new Date().toISOString();
@@ -76,7 +85,12 @@ exports.post = function *() {
 
   if (result[0].ok === true) {
     this.status = result[1].statusCode;
-    this.body = result[0];
+    this.body = Object.assign({}, result[0],
+      {
+        meta: {
+          password: password
+        }
+      });
   }
   else {
     this.status = 400;
@@ -101,7 +115,10 @@ exports.update = function *() {
 
   console.log('User: %j', user);
 
-  var result = yield thunkify(db.insert)(data.user);
+  var existingData = yield thunkify(db.find)({selector: {doctype:'user', _id: user._id}});
+  const existingUser = existingData[0].docs[0];
+
+  var result = yield thunkify(db.insert)(Object.assign(existingUser, data.user));
   if (result.length !== 2) {
     this.status = 500;
     this.body = {
