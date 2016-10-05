@@ -1,15 +1,7 @@
 const thunkify = require('thunkify');
 
-const Cloudant = require('cloudant');
-
 const config = require('../config');
-var cloudant = Cloudant(
-  {
-    account: config.CLOUDANT_ACCOUNT,
-    key: config.CLOUDANT_API_KEY,
-    password: config.CLOUDANT_API_PASSWORD
-  });
-const db = cloudant.use('biblequiz-dev');
+const db = config.db(require('cloudant'));
 
 exports.get = function *() {
   const id = this.params.id;
