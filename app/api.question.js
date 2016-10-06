@@ -52,6 +52,8 @@ exports.post = function *() {
   question.createdAt = new Date().toISOString();
   question.updatedAt = new Date().toISOString();
 
+  // generate rFactor for randomize retrieval
+  question.rFactor = [Math.random(), Math.random(), Math.random()];
   console.log('Question: %j', question);
 
   var result = yield thunkify(db.insert)(data.question);
@@ -89,6 +91,7 @@ exports.update = function *() {
   }
 
   question.updatedAt = new Date().toISOString();
+  question.rFactor = [Math.random(), Math.random(), Math.random()];
 
   console.log('Question: %j', question);
 
