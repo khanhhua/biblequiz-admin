@@ -6,6 +6,8 @@ else {
   exports.CLOUDANT_API_KEY = 'ssadrywhisangetwookindsh';
   exports.CLOUDANT_API_PASSWORD = '636bb8db8195206e06ef8239c0d43a43777da638';
   exports.CLOUDANT_DB = 'biblequiz-dev';
+
+  exports.STATIC_ROOT = 'frontend/dist';
 }
 
 exports.db = function (Cloudant) {

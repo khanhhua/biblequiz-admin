@@ -1,1 +1,1 @@
-web: node --harmony runserver.js
+web: babel-node --presets es2015 runserver.js
