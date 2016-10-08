@@ -15,12 +15,12 @@ else {
 configs.db = function (Cloudant) {
   const cloudant = Cloudant(
     {
-      account: exports.CLOUDANT_ACCOUNT,
-      key: exports.CLOUDANT_API_KEY,
-      password: exports.CLOUDANT_API_PASSWORD
+      account: configs.CLOUDANT_ACCOUNT,
+      key: configs.CLOUDANT_API_KEY,
+      password: configs.CLOUDANT_API_PASSWORD
     });
 
-  return cloudant.use(exports.CLOUDANT_DB);
+  return cloudant.use(configs.CLOUDANT_DB);
 };
 
 module.exports = configs;
