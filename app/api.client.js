@@ -8,6 +8,7 @@ const config = require('../config');
 const db = config.db(require('cloudant'));
 
 exports.mount = function (routable, mountPoint) {
+  routable.options(mountPoint + '/:method', corsHandler);
   routable.get(mountPoint + '/:method', getProcedureInfoHandler);
   routable.post(mountPoint + '/:method', procedureHandler);
 };
@@ -15,6 +16,13 @@ exports.mount = function (routable, mountPoint) {
 const rpc = {
   getQuestionSet: getQuestionSet
 };
+
+function *corsHandler () {
+  this.status = 200;
+  this.set('Access-Control-Allow-Origin', '*');
+  this.set('Access-Control-Allow-Credentials', true);
+  this.set('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+}
 
 function *getProcedureInfoHandler () {
   const methodName = this.params.method;
