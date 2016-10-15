@@ -22,6 +22,7 @@ function *corsHandler () {
   this.set('Access-Control-Allow-Origin', '*');
   this.set('Access-Control-Allow-Credentials', true);
   this.set('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+  this.set('Access-Control-Allow-Headers', 'Content-Type');
 }
 
 function *getProcedureInfoHandler () {
