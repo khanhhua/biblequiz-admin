@@ -27,6 +27,7 @@ function *corsHandler () {
 
 function *getProcedureInfoHandler () {
   const methodName = this.params.method;
+  this.set('Access-Control-Allow-Origin', '*');
 
   this.body = {
     ok: true,
@@ -43,6 +44,7 @@ function *procedureHandler () {
     // TODO Personalize query with request jwt info
     const result = yield handler.call(this, this.request.body);
 
+    this.set('Access-Control-Allow-Origin', '*');
     this.body = {
       ok: true,
       result: result
