@@ -8,6 +8,7 @@ const config = require('../config');
 const db = config.db(require('cloudant'));
 
 exports.mount = function (routable, mountPoint) {
+  routable.options(mountPoint + '/:method', corsHandler);
   routable.get(mountPoint + '/:method', getProcedureInfoHandler);
   routable.post(mountPoint + '/:method', procedureHandler);
 };
@@ -16,8 +17,17 @@ const rpc = {
   getQuestionSet: getQuestionSet
 };
 
+function *corsHandler () {
+  this.status = 200;
+  this.set('Access-Control-Allow-Origin', '*');
+  this.set('Access-Control-Allow-Credentials', true);
+  this.set('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+  this.set('Access-Control-Allow-Headers', 'Content-Type');
+}
+
 function *getProcedureInfoHandler () {
   const methodName = this.params.method;
+  this.set('Access-Control-Allow-Origin', '*');
 
   this.body = {
     ok: true,
@@ -34,6 +44,7 @@ function *procedureHandler () {
     // TODO Personalize query with request jwt info
     const result = yield handler.call(this, this.request.body);
 
+    this.set('Access-Control-Allow-Origin', '*');
     this.body = {
       ok: true,
       result: result
