@@ -1,4 +1,4 @@
-{{#bs-form}}
+{{#bs-form class="form-with-navbar"}}
     <div class={{if errors.category 'form-group has-error' 'form-group'}}>
         <label for="category" class="control-label">Category</label>
         {{input id="category" class="form-control" value=model.category }}
@@ -37,7 +37,15 @@
         {{/if}}
         <button {{action 'addChoice'}} class="btn btn-success btn-sm">Add choice</button>
     </div>
-    <div class="form-group text-center">
+    <div class={{if errors.explanation 'form-group has-error' 'form-group'}}>
+        <label for="explanation" class="control-label">Explanation</label>
+        <p class="help-block">Full explanation on the correct answer (e.g. book and verse)</p>
+      {{textarea id="explanation" class="form-control" value=model.explanation rows="10" }}
+      {{#if errors.content}}
+          <small class="help-block">{{errors.explanation}}</small>
+      {{/if}}
+    </div>
+    <div class="navbar navbar-fixed-bottom text-center">
         <button class="btn btn-primary" {{action 'save' model}}>Save</button>
         <button class="btn btn-default" {{action 'cancel'}}>Cancel</button>
     </div>

@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Small description for frontend goes here",
   "private": true,
   "directories": {
@@ -10,7 +10,8 @@
   "scripts": {
     "build": "ember build",
     "start": "ember server",
-    "test": "ember test"
+    "test": "ember test",
+    "dev": "ember server --proxy=http://localhost:5000"
   },
   "repository": "",
   "engines": {

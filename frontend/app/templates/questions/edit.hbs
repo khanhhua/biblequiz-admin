@@ -1,49 +1,67 @@
-{{#bs-form}}
-    <div class={{if errors.category 'form-group has-error' 'form-group'}}>
-        <label for="category" class="control-label">Category</label>
-      {{input id="category" class="form-control" value=model.category }}
-      {{#if errors.category}}
-          <small class="help-block">{{errors.category}}</small>
-      {{/if}}
-    </div>
-    <div class={{if errors.content 'form-group has-error' 'form-group'}}>
-        <label for="content" class="control-label">Content</label>
-      {{textarea id="content" class="form-control" value=model.content }}
-      {{#if errors.content}}
-          <small class="help-block">{{errors.content}}</small>
-      {{/if}}
-    </div>
-    <div class={{if errors.choices 'form-group has-error' 'form-group'}}>
-        <label class="control-label">Choices</label>
-        <ul class="list-group">
-          {{#each model.choices as |choice index|}}
-              <li class="list-group-item">
-                  <div class="row">
-                      <div class="col-xs-8">
-                        {{input value=choice.text class="form-control" placeholder="Enter your answer"}}
+{{#bs-form class="form-with-navbar"}}
+  <div class="form-group">
+      <p class="text-right text-muted">Last updated at {{model.updatedAt}}</p>
+  </div>
+  {{#bs-tab}}
+    {{#bs-tab-pane title="Basic"}}
+        <div class={{if errors.category 'form-group has-error' 'form-group'}}>
+            <label for="category" class="control-label">Category</label>
+          {{input id="category" class="form-control" value=model.category }}
+          {{#if errors.category}}
+            <small class="help-block">{{errors.category}}</small>
+          {{/if}}
+        </div>
+        <div class={{if errors.content 'form-group has-error' 'form-group'}}>
+            <label for="content" class="control-label">Content</label>
+          {{textarea id="content" class="form-control" value=model.content }}
+          {{#if errors.content}}
+            <small class="help-block">{{errors.content}}</small>
+          {{/if}}
+        </div>
+        <div class={{if errors.choices 'form-group has-error' 'form-group'}}>
+            <label class="control-label">Choices</label>
+            <ul class="list-group">
+              {{#each model.choices as |choice index|}}
+                  <li class="list-group-item">
+                      <div class="row">
+                          <div class="col-xs-8">
+                              {{input value=choice.text class="form-control" placeholder="Enter your answer"}}
+                          </div>
+                          <div class="col-xs-3 checkbox">
+                              <label class="control-label">
+                                {{input checked=choice.correct type="checkbox" }}
+                                  Correct
+                              </label>
+                          </div>
+                          <div class="col-xs-1">
+                              <button class="btn btn-xs btn-danger" {{action 'removeChoice' index}}>
+                                  <span class="glyphicon glyphicon-minus"></span>
+                              </button>
+                          </div>
                       </div>
-                      <div class="col-xs-3 checkbox">
-                          <label class="control-label">
-                            {{input checked=choice.correct type="checkbox" }}
-                              Correct
-                          </label>
-                      </div>
-                      <div class="col-xs-1">
-                          <button class="btn btn-xs btn-danger" {{action 'removeChoice' index}}>
-                              <span class="glyphicon glyphicon-minus"></span>
-                          </button>
-                      </div>
-                  </div>
-              </li>
-          {{/each}}
-        </ul>
-      {{#if errors.choices}}
-          <small class="help-block">{{errors.choices}}</small>
-      {{/if}}
-        <button {{action 'addChoice'}} class="btn btn-success btn-sm">Add choice</button>
-    </div>
-    <div class="form-group text-center">
-        <button class="btn btn-primary" {{action 'save' model}}>Save</button>
-        <button class="btn btn-default" {{action 'cancel'}}>Cancel</button>
-    </div>
+                  </li>
+              {{/each}}
+            </ul>
+          {{#if errors.choices}}
+              <small class="help-block">{{errors.choices}}</small>
+          {{/if}}
+            <button {{action 'addChoice'}} class="btn btn-success btn-sm">Add choice</button>
+        </div>
+    {{/bs-tab-pane}}
+
+    {{#bs-tab-pane title="Extra"}}
+        <div class={{if errors.explanation 'form-group has-error' 'form-group'}}>
+            <label for="explanation" class="control-label">Explanation</label>
+            <p class="help-block">Full explanation on the correct answer (e.g. book and verse)</p>
+          {{textarea id="explanation" class="form-control" value=model.explanation rows="10" }}
+          {{#if errors.content}}
+              <small class="help-block">{{errors.explanation}}</small>
+          {{/if}}
+        </div>
+    {{/bs-tab-pane}}
+  {{/bs-tab}}
+  <div class="navbar navbar-fixed-bottom text-center">
+      <button class="btn btn-primary" {{action 'save' model}}>Save</button>
+      <button class="btn btn-default" {{action 'cancel'}}>Cancel</button>
+  </div>
 {{/bs-form}}

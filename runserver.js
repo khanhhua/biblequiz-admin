@@ -1,3 +1,4 @@
+#!/usr/bin/env babel-node --presets es2015
 const http = require('http');
 const app = require('./app');
 const server = http.createServer(app.callback());
