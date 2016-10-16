@@ -62,3 +62,21 @@
 .list-group-item .row .btn.btn-xs {
   margin-top: 5px;
 }
+
+
+.tab-content > .tab-pane {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.form.form-with-navbar {
+  padding-bottom: 80px;
+}
+
+.form .navbar.navbar-fixed-bottom {
+  padding-top: 8px;
+  border-top: 1px solid #e7e7e7;
+  background-color: white;
+
+  box-shadow: 0 -1px 5px rgba(0,0,0,.2);
+}
