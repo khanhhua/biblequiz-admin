@@ -7,15 +7,17 @@ const thunkify = require('thunkify');
 const config = require('../config');
 const db = config.db(require('cloudant'));
 
+const clientQueries = require('./client-queries');
+
 exports.mount = function (routable, mountPoint) {
   routable.options(mountPoint + '/:method', corsHandler);
   routable.get(mountPoint + '/:method', getProcedureInfoHandler);
   routable.post(mountPoint + '/:method', procedureHandler);
 };
 
-const rpc = {
-  getQuestionSet: getQuestionSet
-};
+// const rpc = {
+//   getQuestionSet: getQuestionSet
+// };
 
 function *corsHandler () {
   this.status = 200;
@@ -38,11 +40,20 @@ function *getProcedureInfoHandler () {
 
 function *procedureHandler () {
   const methodName = this.params.method;
-  const handler = rpc[methodName];
+  const handler = clientQueries[methodName];
+
+  if (!handler) {
+    this.body = {
+      ok: false,
+      error: 'Method undefined "' + methodName + '"'
+    };
+
+    return;
+  }
 
   try {
     // TODO Personalize query with request jwt info
-    const result = yield handler.call(this, this.request.body);
+    const result = yield handler.call(this, {db}, this.request.body);
 
     this.set('Access-Control-Allow-Origin', '*');
     this.body = {
@@ -56,57 +67,4 @@ function *procedureHandler () {
       error: e.message
     };
   }
-}
-
-/**
- * Get a set of questions for a specific
- *
- * @param this
- * @param params
- * @return {{id, category, content, choices}}
- */
-function *getQuestionSet (params) {
-  const {category} = params;
-  const size = this.query.size;
-  const r = Math.random();
-
-  console.log('[getQuestionSet] Params: %j, size: %d, rFactor: %s', params, size, r);
-
-  let data, items;
-  data = yield thunkify(db.view)('question', 'question-random-r1',
-    {
-      startkey: [category, r],
-      endkey: [category, 1],
-      descending: false,
-      limit: size,
-      reduce: false
-    });
-
-  items = data[0].rows.map(item => {
-    const {_id:id, category, content, choices} = item.value;
-
-    return {id, category, content, choices};
-  });
-
-  if (items.length === size) {
-    return items;
-  }
-
-  console.log(`[getQuestionSet] Question set insufficient. Proceeding to get more...`);
-  data = yield thunkify(db.view)('question', 'question-random-r1',
-    {
-      startkey: [category, r],
-      endkey: [category, 0],
-      descending: true,
-      limit: size,
-      reduce: false
-    });
-
-  items = items.concat(data[0].rows.map(item => {
-    const {_id:id, category, content, choices} = item.value;
-
-    return {id, category, content, choices};
-  }));
-
-  return items;
 }
