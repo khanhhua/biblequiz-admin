@@ -54,6 +54,41 @@ export function *getQuestionSet ({db}, params) {
   return items;
 }
 
+export function *startQuizSession({db, user}, params) {
+  const {questions} = params;
+  const {id: username} = user;
+
+  var query = yield thunkify(db.find)({selector: {doctype:'user', _id: username}});
+
+  if (!query[0] || !query[0].docs[0]) {
+    throw new Error('Cannot start quiz session');
+  }
+
+  var userDocument = query[0].docs[0];
+  if (userDocument.activeQuiz) {
+    console.warn('[startQuizSession] Overriding current active quiz...');
+  }
+
+  userDocument.activeQuiz = {
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    questions
+  };
+
+  console.log(`[startQuizSession] Updating ${userDocument.username}...`);
+  const result = yield thunkify(db.insert)(userDocument);
+  if (result[0].ok === true) {
+    return result[0];
+  } else {
+    throw new Error('[startQuizSession] Could not start quiz session.');
+  }
+}
+startQuizSession.$inject = ['db', 'user'];
+/**
+ *
+ * @param db
+ * @param params
+ */
 export function *getCategories ({db}, params) {
   const data = yield thunkify(db.view)('question', 'public-categories', {limit:1, reduce: true});
 
@@ -65,4 +100,34 @@ export function *getCategories ({db}, params) {
   console.log(`[getCategories] Found categories`, items);
 
   return items;
+}
+
+/**
+ * Generate a shareable url should ensure that upon open a shareable URI
+ * The name questions are retrieved
+ *
+ * @param context
+ * @param params
+ * @return {{shareableUrl: *}}
+ */
+export function *createShareableUri(context, params) {
+  const {userId} = params;
+
+  // Using the userId, system must retrieved the corresponding questions
+
+  const shareableUri = '';
+
+  return {
+    shareableUri
+  };
+}
+
+export function *resolveShareableUrl(context, params) {
+  const {uri} = params;
+
+  const questions = [];
+
+  return {
+    questions
+  };
 }

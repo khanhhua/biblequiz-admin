@@ -52,7 +52,7 @@ exports.authenticate = function *() {
 
 exports.middlewares = {
   deserializer: function *(next) {
-    const authentication = this.headers['authentication'];
+    const authentication = this.headers['authorization'];
     if (!authentication) {
       return yield next;
     }
@@ -70,7 +70,7 @@ exports.middlewares = {
         roles: payload.roles
       };
 
-      console.info(`[deserializer] Current user: %j`, this.request.currentUser);
+      console.log(`[deserializer] Current user: %j`, this.request.currentUser);
       return yield next;
     }
     catch (e) {
