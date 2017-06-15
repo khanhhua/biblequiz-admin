@@ -1,5 +1,9 @@
 const thunkify = require('thunkify');
+const Hashids = require('hashids');
+const uuid = require('uuid/v1');
 
+const hasher = new Hashids('THIS IS MY SALT');
+const BASE_URL = process.env['BASE_URL'];
 /**
  * Get a set of questions for a specific
  *
@@ -110,24 +114,85 @@ export function *getCategories ({db}, params) {
  * @param params
  * @return {{shareableUrl: *}}
  */
-export function *createShareableUri(context, params) {
-  const {userId} = params;
+export function *createShareableUri({db, user}, params) {
+  const {id: username} = user; // We always use user login as the identifier (hence id, username means the same)
 
-  // Using the userId, system must retrieved the corresponding questions
+  // Using the username, system must retrieved the corresponding questions
+  var query = yield thunkify(db.find)({selector: {doctype:'user', _id: username}});
 
-  const shareableUri = '';
+  if (!query[0] || !query[0].docs[0]) {
+    throw new Error('Create shareable URL');
+  }
+
+  const userDocument = query[0].docs[0];
+  let quiz;
+  let shareableUri;
+  if (!userDocument.activeQuiz) {
+    throw new Error('User has no quiz');
+  }
+
+  const publicIdentifier = generatePublicIdentifier();
+  const uri = `q/${publicIdentifier}`;
+  const updatedAt = new Date().toISOString();
+  // Extract the quiz object from user into a separate document
+  quiz = Object.assign(
+    {
+      doctype: 'quiz',
+      version: '1.0.0',
+      archived: true,
+      ownerId: username,
+      uri,
+      updatedAt
+    },
+    userDocument.activeQuiz);
+
+  const [{ok}] = yield thunkify(db.insert)(quiz);
+
+  if (ok !== true) {
+    throw new Error(`Could not insert quiz`);
+  }
+
+  shareableUri = `${BASE_URL}/${uri}`;
 
   return {
+    updatedAt,
     shareableUri
   };
 }
+createShareableUri.$inject = ['db', 'user'];
 
-export function *resolveShareableUrl(context, params) {
+export function *resolveShareableUri({db}, params) {
   const {uri} = params;
+  const [existingData] = yield thunkify(db.view)('quiz','quiz-archived',
+    {
+      startkey: uri,
+      endkey: uri,
+      descending: true,
+      limit: 1,
+      reduce: false
+    });
 
-  const questions = [];
+  if (!(existingData.rows && existingData.rows.length)) {
+    console.warn(`Cannot find quiz at URI: ${uri}`);
+    throw new Error('Quiz not found');
+  }
+
+  const quiz = existingData.rows[0].value;
+
+  const {
+    updatedAt,
+    questions
+  } = quiz;
 
   return {
+    updatedAt,
     questions
   };
+}
+
+function generatePublicIdentifier() {
+  const idString = uuid().replace(/-/g, ''); // strip dashes away from UUID V1
+  const charCodeArray = idString.split('').map(function (item) { return item.charCodeAt(0); });
+
+  return hasher.encode(charCodeArray);
 }
