@@ -7,7 +7,7 @@ const thunkify = require('thunkify');
 const config = require('../config');
 const db = config.db(require('cloudant'));
 
-const clientQueries = require('./client-queries');
+const clientRpc = require('./client-rpc');
 
 exports.mount = function (routable, mountPoint) {
   routable.options(mountPoint + '/:method', corsHandler);
@@ -40,7 +40,7 @@ function *getProcedureInfoHandler () {
 
 function *procedureHandler () {
   const methodName = this.params.method;
-  const handler = clientQueries[methodName];
+  const handler = clientRpc[methodName];
 
   if (!handler) {
     this.body = {
@@ -53,7 +53,21 @@ function *procedureHandler () {
 
   try {
     // TODO Personalize query with request jwt info
-    const result = yield handler.call(this, {db}, this.request.body);
+    const context = {};
+    const inject = handler.$inject || ['db'];
+
+    console.log('[handler]: injections = %j', inject);
+    console.log('[handler]: current user = %j', this.request.currentUser);
+
+    // Resolve injections
+    if (inject.indexOf('db') !== -1) {
+      context['db'] = db;
+    }
+    if (inject.indexOf('user') !== -1) {
+      context['user'] = this.request.currentUser;
+    }
+
+    const result = yield handler.call(this, context, this.request.body);
 
     this.set('Access-Control-Allow-Origin', '*');
     this.body = {
